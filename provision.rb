@@ -9,7 +9,7 @@ require_relative 'delete'
 
 String command = ''
 String stackName = 'myStack'
-String key = "PhilsAWSKey.pem"
+String key = "PhilsAWSKey"
 verbose = false
 
 user = ENV["USER"]

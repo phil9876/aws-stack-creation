@@ -1,6 +1,12 @@
 {
    "AWSTemplateFormatVersion" : "2010-09-09",
    "Description" : "Simple EC2 instance",
+   "Parameters" : {
+      "KeyName" : {
+         "Description": "The name of the keypair to use",
+         "Type": "String"
+      }
+   },
    "Resources" : {
       "MyEC2Instance" : {
          "Type" : "AWS::EC2::Instance",
@@ -10,7 +16,9 @@
             "InstanceInitiatedShutdownBehavior" : "terminate", 
             "InstanceType" : "t2.micro", 
             "ImageId" : "ami-8b8c57f8",
-            "KeyName" : "PhilsAWSKey",
+            "KeyName" : {
+               "Ref" : "KeyName"
+            },
             "BlockDeviceMappings" : [
                {
                   "DeviceName" : "/dev/sda1",

@@ -19,11 +19,13 @@ def createStack(stackName, user, key, verbose)
 
   puts("Creating stack " + stackName)
 
+  paramaters = "ParameterKey=KeyName,ParameterValue=#{key}"
+
   if verbose
-    puts("Executing 'aws cloudformation create-stack --stack-name #{stackName} --template-body file://#{Dir.pwd}/ec2.template'")
+    puts("Executing 'aws cloudformation create-stack --stack-name #{stackName} --template-body \"file://#{Dir.pwd}/ec2.template\"  --parameters #{paramaters}")
   end
 
-  stackCreation = `aws cloudformation create-stack --stack-name #{stackName} --template-body "file://#{Dir.pwd}/ec2.template"`
+  stackCreation = `aws cloudformation create-stack --stack-name #{stackName} --template-body "file://#{Dir.pwd}/ec2.template" --parameters #{paramaters}`
 
   if verbose
     puts(stackCreation)
@@ -120,6 +122,6 @@ def createStack(stackName, user, key, verbose)
 #system("ansible-playbook site.yml -i \"#{ec2IpAddress},\" -u ec2-user --key-file=/Users/#{user}/.ssh/#{user}-nonprod.pem")
 
 
-  puts("Your environment is now provisioned.  You can connect to it by using 'ssh -i /Users/#{user}/.ssh/#{key} ec2-user@#{ec2IpAddress}'")
+  puts("Your environment is now provisioned.  You can connect to it by using 'ssh -i /Users/#{user}/.ssh/#{key}.pem ec2-user@#{ec2IpAddress}'")
 
 end
