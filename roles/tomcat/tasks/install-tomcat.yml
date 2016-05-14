@@ -1,0 +1,23 @@
+---
+
+- name: create tomcat group
+  group: name=tomcat
+
+- name: create tomcat user
+  user: name=tomcat group=tomcat
+
+- name: Get Tomcat files
+  get_url: url=http://mirror.catn.com/pub/apache/tomcat/tomcat-8/v8.0.33/bin/apache-tomcat-8.0.33.tar.gz
+    dest=/tmp/apache-tomcat-8.0.33.tar.gz checksum="sha1:c44e6b6a58b514818e9c944d8f04ca5cc58d0777"
+
+- name: Unzip Tomcat files
+  unarchive: copy=no dest=/tmp src=/tmp/apache-tomcat-8.0.33.tar.gz creates=/tmp/apache-tomcat-8.0.33
+
+- name: Ensure that /var/tomcat exists
+  file: state=directory path=/var/tomcat mode=750
+
+- name: Move Tomcat files to /var
+  shell: cp -Rf /tmp/apache-tomcat-8.0.33/* /var/tomcat
+
+
+

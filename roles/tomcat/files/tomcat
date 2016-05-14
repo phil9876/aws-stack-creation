@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# tomcat        
+#
+# chkconfig: 234 20 80
+# description: 	Start up the Tomcat servlet engine.
+
+# Source function library.
+. /etc/init.d/functions
+
+
+CATALINA_HOME="/var/tomcat"
+
+/bin/su tomcat $CATALINA_HOME/bin/catalina.sh $1
+
+RETVAL=$?
+exit $RETVAL

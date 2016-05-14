@@ -1,0 +1,26 @@
+---
+
+- name: Replace server.xml and tomcat-users.xml
+  copy: dest=/var/tomcat/conf force=yes src={{item}}
+  with_items:
+  - server.xml
+  - tomcat-users.xml
+
+- name: Add key stores
+  copy: dest=/var/tomcat/conf src={{item}}
+  with_items:
+  #- MyTrustKeystore.jks
+  - MyIdentityKeystore.jks
+
+- name: copy setenv script to Tomcat bin
+  copy: dest=/var/tomcat/bin src=setenv.sh
+
+- name: Change owner and group of all Tomcat files
+  file: state=directory path=/var/tomcat recurse=yes owner=tomcat group=tomcat
+
+- name: Add Tomcat startup script to init.d
+  copy: dest=/etc/init.d src=tomcat force=yes mode=u+x
+
+- name: Set Tomcat to start automatically
+  shell: chkconfig --level 2345 tomcat on
+  notify: start tomcat
