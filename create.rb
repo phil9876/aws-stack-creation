@@ -19,7 +19,11 @@ def createStack(stackName, user, key, verbose)
 
   puts("Creating stack " + stackName)
 
-  stackCreation = `aws cloudformation create-stack --stack-name #{stackName} --template-body file://\`pwd\`//ec2.template`
+  if verbose
+    puts("Executing 'aws cloudformation create-stack --stack-name #{stackName} --template-body file://#{Dir.pwd}/ec2.template'")
+  end
+
+  stackCreation = `aws cloudformation create-stack --stack-name #{stackName} --template-body file://#{Dir.pwd}/ec2.template`
 
   if verbose
     puts(stackCreation)
