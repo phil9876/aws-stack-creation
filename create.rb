@@ -1,10 +1,14 @@
-def createStack(stackName, user, key)
+def createStack(stackName, user, key, verbose)
 
   puts("Creating stack")
 
   puts("Checking that stack " + stackName + " doesn't already exist")
 
   stackExists = `aws cloudformation describe-stacks --stack-name #{stackName} 2>&1`.strip
+
+  if verbose
+    puts("stackExists = " + stackExists)
+  end
 
 
   unless stackExists.include?("does not exist")
@@ -17,7 +21,9 @@ def createStack(stackName, user, key)
 
   stackCreation = `aws cloudformation create-stack --stack-name #{stackName} --template-body file://\`pwd\`//ec2.template`
 
-  puts(stackCreation)
+  if verbose
+    puts(stackCreation)
+  end
 
 
   if $?.exitstatus != 0
@@ -32,7 +38,13 @@ def createStack(stackName, user, key)
 
     puts("Checking status of stack " + stackName)
 
-    stackStatus = JSON.parse(`aws cloudformation describe-stacks --stack-name #{stackName}`)["Stacks"][0]["StackStatus"]
+    stackStatusString = `aws cloudformation describe-stacks --stack-name #{stackName}`
+
+    if verbose
+      puts("stackStatusString = " + stackStatusString)
+    end
+
+    stackStatus = JSON.parse(stackStatusString)["Stacks"][0]["StackStatus"]
 
     puts("Stack " + stackName + " status is " + stackStatus)
 
@@ -47,10 +59,21 @@ def createStack(stackName, user, key)
 
   end
 
+  stackResources = `aws cloudformation describe-stack-resources --stack-name #{stackName}`
 
-  ec2InstanceId = JSON.parse(`aws cloudformation describe-stack-resources --stack-name #{stackName}`)["StackResources"][0]["PhysicalResourceId"]
+  if verbose
+    puts("stackResources = " + stackResources)
+  end
 
-  ec2IpAddress = JSON.parse(`aws ec2 describe-instances --instance-id #{ec2InstanceId}`)["Reservations"][0]["Instances"][0]["PublicIpAddress"]
+  ec2InstanceId = JSON.parse(stackResources)["StackResources"][0]["PhysicalResourceId"]
+
+  stackInstance  = `aws ec2 describe-instances --instance-id #{ec2InstanceId}`
+
+  if verbose
+    puts("stackInstance = " + stackInstance)
+  end
+
+  ec2IpAddress = JSON.parse(stackInstance)["Reservations"][0]["Instances"][0]["PublicIpAddress"]
 
   puts("The private IP address of your EC2 instance is " + ec2IpAddress + ", the instance Id is " + ec2InstanceId)
 
@@ -64,8 +87,14 @@ def createStack(stackName, user, key)
 
     puts("Checking reachability status of EC2 instance.....")
 
+    ec2Status = `aws ec2 describe-instance-status --instance-id #{ec2InstanceId}`
 
-    ec2ReachabilityStatus = JSON.parse(`aws ec2 describe-instance-status --instance-id #{ec2InstanceId}`)["InstanceStatuses"][0]["InstanceStatus"]["Details"][0]["Status"]
+    if verbose
+      puts("ec2Status = " + ec2Status)
+    end
+
+
+    ec2ReachabilityStatus = JSON.parse(ec2Status)["InstanceStatuses"][0]["InstanceStatus"]["Details"][0]["Status"]
 
     if ec2ReachabilityStatus != "initializing"
       instanceUp = true

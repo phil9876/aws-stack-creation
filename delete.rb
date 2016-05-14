@@ -1,9 +1,13 @@
-def deleteStack(stackName, user, key)
+def deleteStack(stackName, user, key, verbose)
   puts("Deleting stack")
 
   puts("Checking if stack " + stackName + " exists")
 
   stackExists = `aws cloudformation describe-stacks --stack-name #{stackName} 2>&1`.strip
+
+  if verbose
+    puts("stackExists = " + stackExists)
+  end
 
 
   if stackExists.include?("does not exist")
@@ -13,6 +17,10 @@ def deleteStack(stackName, user, key)
 
 
   deleteStack = `aws cloudformation delete-stack --stack-name #{stackName}`
+
+  if verbose
+    puts("deleteStack = " + deleteStack)
+  end
 
   puts("Deletion of stack " + stackName + " underway")
 
@@ -24,6 +32,10 @@ def deleteStack(stackName, user, key)
     puts("Checking status of stack " + stackName)
 
     stackExists = `aws cloudformation describe-stacks --stack-name #{stackName} 2>&1`.strip
+
+    if verbose
+      puts("stackExists = " + stackExists)
+    end
 
     if stackExists.include?("does not exist")
       puts("Deletion of stack " + stackName + " complete.  Exiting.")

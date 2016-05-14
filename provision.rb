@@ -10,6 +10,7 @@ require_relative 'delete'
 String command = ''
 String stackName = 'myStack'
 String key = "PhilsAWSKey.pem"
+verbose = false
 
 user = ENV["USER"]
 
@@ -28,18 +29,18 @@ OptionParser.new do |opts|
   opts.on("--stackName=stack", "The name of the stack to create") do |s|
     stackName = s
   end
+
+  opts.on("--verbose", "Run in verbose mode") do |v|
+    verbose = true
+  end
 end.parse!
 
 
 case command
   when "create"
-    createStack(stackName, user, key)
+    createStack(stackName, user, key, verbose)
   when "delete"
-    deleteStack(stackName, user, key)
-  when "stop"
-    stop
-  when "restart"
-    restart
+    deleteStack(stackName, user, key, verbose)
   else
     puts("Command " + command + " is invalid.  Exitting")
     exit(300)
@@ -47,16 +48,6 @@ end
 
 
 
-def stop
-  puts("Stopping stack")
-
-end
-
-
-def restart
-  puts("restarting stack")
-
-end
 
 
 
