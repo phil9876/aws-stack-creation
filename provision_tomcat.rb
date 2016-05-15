@@ -5,7 +5,7 @@ require 'json'
 require 'optparse'
 
 String key = ''
-String ec2IpAddress = ''
+String stackName = ''
 verbose = false
 
 user = ENV["USER"]
@@ -18,8 +18,8 @@ OptionParser.new do |opts|
     key = k
   end
 
-  opts.on("--ip=IPADDRESS", "The IP address of the instance to install Tomcat on") do |i|
-    ec2IpAddress = i
+  opts.on("--stackName=STACK", "The name of the stack to create") do |s|
+    stackName = s
   end
 
   opts.on("-v", "--verbose", "Run in verbose mode") do |v|
@@ -29,8 +29,40 @@ end.parse!
 
 if verbose
   puts("key = " + key)
-  puts("ec2IpAddress = " + ec2IpAddress)
+  puts("stackName = " + stackName)
 end
+
+puts("Checking if stack " + stackName + " exists")
+
+stackExists = `aws cloudformation describe-stacks --stack-name #{stackName} 2>&1`.strip
+
+if verbose
+  puts("stackExists = " + stackExists)
+end
+
+
+if stackExists.include?("does not exist")
+  puts("Stack " + stackName + " does not exist.  Exiting.")
+  exit(100)
+end
+
+stackResources = `aws cloudformation describe-stack-resources --stack-name #{stackName}`
+
+if verbose
+  puts("stackResources = " + stackResources)
+end
+
+ec2InstanceId = JSON.parse(stackResources)["StackResources"][0]["PhysicalResourceId"]
+
+stackInstance  = `aws ec2 describe-instances --instance-id #{ec2InstanceId}`
+
+if verbose
+  puts("stackInstance = " + stackInstance)
+end
+
+ec2IpAddress = JSON.parse(stackInstance)["Reservations"][0]["Instances"][0]["PublicIpAddress"]
+
+puts("The private IP address of your EC2 instance is " + ec2IpAddress + ", the instance Id is " + ec2InstanceId)
 
 
 puts("Provisioning Tomcat on EC2 instance")
