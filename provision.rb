@@ -8,8 +8,8 @@ require_relative 'create'
 require_relative 'delete'
 
 String command = ''
-String stackName = ENV["STACK_NAME"]
-String key = ENV["AWS_KEY"]
+  String stackName = ENV["STACK_NAME"]
+  String key = ENV["AWS_KEY"]
 verbose = false
 
 user = ENV["USER"]

@@ -1,5 +1,0 @@
----
-
-- include: install-utils.yml
-- include: install-tomcat.yml
-- include: configure-tomcat.yml
