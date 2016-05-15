@@ -4,8 +4,8 @@ require 'rubygems'
 require 'json'
 require 'optparse'
 
-String key = ''
-String stackName = ''
+String stackName = ENV["STACK_NAME"]
+String key = ENV["AWS_KEY"]
 verbose = false
 
 user = ENV["USER"]
@@ -14,11 +14,11 @@ options = {}
 OptionParser.new do |opts|
   opts.banner = "Usage: provision.rb --command=command [options]"
 
-  opts.on("--key=KEY", "The key to use") do |k|
+  opts.on("--key=key", "The key to use") do |k|
     key = k
   end
 
-  opts.on("--stackName=STACK", "The name of the stack to create") do |s|
+  opts.on("--stackName=stack", "The name of the stack to create") do |s|
     stackName = s
   end
 

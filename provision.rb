@@ -8,8 +8,8 @@ require_relative 'create'
 require_relative 'delete'
 
 String command = ''
-String stackName = 'myStack'
-String key = "PhilsAWSKey"
+String stackName = ENV["STACK_NAME"]
+String key = ENV["AWS_KEY"]
 verbose = false
 
 user = ENV["USER"]
@@ -22,11 +22,11 @@ OptionParser.new do |opts|
     command = c
   end
 
-  opts.on("--key=KEY", "The key to use") do |k|
+  opts.on("--key=key", "The key to use") do |k|
     key = k
   end
 
-  opts.on("--stackName=STACK", "The name of the stack to create") do |s|
+  opts.on("--stackName=stack", "The name of the stack to create") do |s|
     stackName = s
   end
 
